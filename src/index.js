@@ -1,5 +1,7 @@
 import express from 'express'
+import path from 'path';
 import { createPool } from 'mysql2/promise'
+import { fileURLToPath } from 'url';
 
 const app = express()
 const pool = createPool({
@@ -9,12 +11,14 @@ const pool = createPool({
     port: 3306,
     database: 'biblioteca',
 })
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 app.use(express.json())
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req, res) =>{
-    res.send('Hello world')
-})
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  });
 
 app.get('/ping', async (req, res) =>{
     try {
@@ -35,6 +39,54 @@ app.get('/test', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 })
+
+// Ruta para iniciar sesión
+app.post('/login', async (req, res) => {
+    const { email_usuario, pass_usuario} = req.body;
+    try {
+        const [rows] = await pool.query('SELECT * FROM Usuario WHERE emai_usuario = ?', [email_usuario]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+
+        const user = rows[0];
+        
+        // Aquí puedes agregar una verificación de la contraseña, por ejemplo, usando bcrypt
+        if (user.pass_usuario !== pass_usuario) {
+            return res.status(401).json({ error: 'Contraseña incorrecta' });
+        }
+
+        res.status(200).json({ message: 'Inicio de sesión exitoso', user });
+    } catch (error) {
+        console.error('Error en /login:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
+// Ruta para registrar un nuevo usuario
+app.post('/register', async (req, res) => {
+    console.log('Solicitud de registro recibida');
+    const { nombre_usuario, email_usuario, pass_usuario } = req.body;
+
+    try {
+        // Verificar si el correo ya está registrado
+        const [existingUser] = await pool.query('SELECT * FROM Usuario WHERE email_usuario = ?', [email_usuario]);
+        if (existingUser.length > 0) {
+            return res.status(400).json({ error: 'Correo electrónico ya registrado' });
+        }
+
+        // Insertar el nuevo usuario en la base de datos
+        const [result] = await pool.query('INSERT INTO Usuario (nombre_usuario, email_usuario, pass_usuario) VALUES (?, ?, ?)', [nombre_usuario, email_usuario, pass_usuario]);
+
+        res.status(201).json({ message: 'Usuario registrado exitosamente', id_usuario: result.insertId });
+    } catch (error) {
+        console.error('Error en /register:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+
+
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {

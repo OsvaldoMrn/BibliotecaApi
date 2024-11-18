@@ -1,3 +1,7 @@
+CREATE database biblioteca;
+
+use biblioteca;
+
 -- Tabla Administrador
 CREATE TABLE Administrador (
     id_admin INT PRIMARY KEY AUTO_INCREMENT,

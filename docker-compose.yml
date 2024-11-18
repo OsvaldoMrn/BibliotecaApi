@@ -1,6 +1,21 @@
 version: '3.8'
 
 services:
+  web:
+    build:
+      context: .
+    ports:
+      - "80:5000"
+    environment:
+      MYSQL_HOST: mysqldb
+      MYSQL_USER: root
+      MYSQL_PASSWORD: admin
+      MYSQL_DATABASE: biblioteca
+    depends_on:
+      - mysqldb
+    networks:
+      - biblioteca-network
+
   mysqldb:
     image: mysql:latest
     restart: always
@@ -8,7 +23,7 @@ services:
       - MYSQL_ROOT_PASSWORD=admin
       - MYSQL_DATABASE=biblioteca
     ports:
-      - 3307:3306
+      - 3310:3306
     volumes:
       - mysql-data-biblioteca:/var/lib/mysql
       - ./scripts:/docker-entrypoint-initdb.d
@@ -23,3 +38,7 @@ services:
 
 volumes:
   mysql-data-biblioteca:
+
+networks:
+  biblioteca-network:
+    driver: bridge
