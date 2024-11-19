@@ -111,7 +111,7 @@ app.get('/test/prestamo', async (req, res) => {
 app.post('/login', async (req, res) => {
     const { email_usuario, pass_usuario} = req.body;
     try {
-        const [rows] = await pool.query('SELECT * FROM Usuario WHERE emai_usuario = ?', [email_usuario]);
+        const [rows] = await pool.query('SELECT * FROM Usuario WHERE email_usuario = ?', [email_usuario]);
 
         if (rows.length === 0) {
             return res.status(404).json({ error: 'Usuario no encontrado' });
@@ -133,27 +133,22 @@ app.post('/login', async (req, res) => {
 
 // Ruta para registrar un nuevo usuario
 app.post('/register', async (req, res) => {
-    console.log('Solicitud de registro recibida');
     const { nombre_usuario, email_usuario, pass_usuario } = req.body;
 
+    if (!nombre_usuario || !email_usuario || !pass_usuario) {
+        return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+    }
+
     try {
-        // Verificar si el correo ya está registrado
-        const [existingUser] = await pool.query('SELECT * FROM Usuario WHERE email_usuario = ?', [email_usuario]);
-        if (existingUser.length > 0) {
-            return res.status(400).json({ error: 'Correo electrónico ya registrado' });
-        }
+        const query = 'INSERT INTO Usuario (nombre_usuario, email_usuario, pass_usuario) VALUES (?, ?, ?)';
+        const [result] = await pool.query(query, [nombre_usuario, email_usuario, pass_usuario]);
 
-        // Insertar el nuevo usuario en la base de datos
-        const [result] = await pool.query('INSERT INTO Usuario (nombre_usuario, email_usuario, pass_usuario) VALUES (?, ?, ?)', [nombre_usuario, email_usuario, pass_usuario]);
-
-        res.status(201).json({ message: 'Usuario registrado exitosamente', id_usuario: result.insertId });
+        res.status(201).json({ message: 'Usuario registrado exitosamente', userId: result.insertId });
     } catch (error) {
-        console.error('Error en /register:', error);
-        res.status(500).json({ error: 'Error interno del servidor' });
+        console.error('Error en /register:', error.message);
+        res.status(500).json({ error: 'Error al registrar usuario' });
     }
 });
-
-
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {

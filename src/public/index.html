@@ -57,119 +57,23 @@
 
         <!-- Formulario de Registro -->
         <div id="registerForm" class="px-4 hidden">
-            <form action="home.html" method="get">
+            <form id="registerFormElement">
                 <div class="mb-6">
                     <label class="block text-gray-700 font-semibold mb-2">Nombre Completo</label>
-                    <input type="text" name="nombre_usuario" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
+                    <input type="text" name="nombre_usuario_signin" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
                 </div>
                 <div class="mb-6">
                     <label class="block text-gray-700 font-semibold mb-2">Correo Electrónico</label>
-                    <input type="email" name="email_usuario" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
+                    <input type="email" name="email_usuario_signin" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
                 </div>
                 <div class="mb-6">
                     <label class="block text-gray-700 font-semibold mb-2">Contraseña</label>
-                    <input type="password" name="pass_usuario" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
+                    <input type="password" name="pass_usuario_signin" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" required>
                 </div>
-                <div class="mb-6">
-                    <label class="block text-gray-700 font-semibold mb-2">Tipo de Usuario</label>
-                    <select name="userType" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
-                        <option value="user">Usuario</option>
-                        <option value="admin">Administrador</option>
-                    </select>
-                </div>
-                <button class="w-full bg-cafe-600 text-white py-3 rounded-lg font-semibold hover:bg-cafe-700 transition duration-300" type="submit">Registrarse</button>
+                <button class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300" type="submit">Registrarse</button>
             </form>
         </div>
     </div>
-
-    <script>
-       function showLogin() {
-        document.getElementById('loginForm').classList.remove('hidden');
-        document.getElementById('registerForm').classList.add('hidden');
-        document.getElementById('loginTab').classList.add('border-blue-500', 'text-blue-600');
-        document.getElementById('registerTab').classList.remove('border-blue-500', 'text-blue-600');
-    }
-    function showRegister() {
-        document.getElementById('registerForm').classList.remove('hidden');
-        document.getElementById('loginForm').classList.add('hidden');
-        document.getElementById('registerTab').classList.add('border-blue-500', 'text-blue-600');
-        document.getElementById('loginTab').classList.remove('border-blue-500', 'text-blue-600');
-    }
-        showLogin();
-        // Función para manejar el registro
-async function handleRegister(event) {
-    event.preventDefault();
-    
-    const fullName = document.querySelector('input[name="nombre_usuario"]').value;
-    const email = document.querySelector('input[name="email_usuario"]').value;
-    const password = document.querySelector('input[name="pass_usuario"]').value;
-    //const userType = document.querySelector('select[name="userType"]').value;
-
-    try {
-        const response = await fetch('/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ nombre_usuario, email_usuario, pass_usuario})
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            console.log('Usuario registrado:', result);
-            // Si el registro es exitoso, redirigir o mostrar mensaje
-            alert('Registro exitoso');
-            window.location.href = '/login.html';  // Redirigir al login
-        } else {
-            alert(data.error);  // Mostrar el error
-        }
-    } catch (error) {
-        console.error('Error al hacer la solicitud:', error);
-        alert('Hubo un problema al intentar registrarse');
-    }
-}
-
-// Añadir el evento al formulario de registro
-document.querySelector('#registerForm form').addEventListener('submit', handleRegister)
-
-
-// Función para manejar el registro
-async function handleRegister(event) {
-    event.preventDefault();
-    
-    const fullName = document.querySelector('input[name="nomabre_usuario"]').value;
-    const email = document.querySelector('input[name="email_usuario"]').value;
-    const password = document.querySelector('input[name="pass_usuario"]').value;
-    //const userType = document.querySelector('select[name="userType"]').value;
-
-    try {
-        const response = await fetch('/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ nombre_usuario, email_usuario, pass_usuario})
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            // Si el registro es exitoso, redirigir o mostrar mensaje
-            alert('Registro exitoso');
-            window.location.href = '/login.html';  // Redirigir al login
-        } else {
-            alert(data.error);  // Mostrar el error
-        }
-    } catch (error) {
-        console.error('Error al hacer la solicitud:', error);
-        alert('Hubo un problema al intentar registrarse');
-    }
-}
-
-// Añadir el evento al formulario de registro
-document.querySelector('#registerForm form').addEventListener('submit', handleRegister);
-
-    </script>
+    <script src="/javascripting/app.js"></script>
 </body>
 </html>
