@@ -40,6 +40,73 @@ app.get('/test', async (req, res) => {
     }
 })
 
+// Para la tabla Administrador
+app.get('/test/administrador', async (req, res) => {
+    try {
+        const [rows] = await pool.query('SELECT * FROM Administrador');
+        res.json(rows);
+    } catch (error) {
+        console.error('Error en /test/administrador:', error.message);
+        res.status(500).json({ error: 'Error al obtener datos de Administrador' });
+    }
+});
+
+// Para la tabla Usuario
+app.get('/test/usuario', async (req, res) => {
+    try {
+        const [rows] = await pool.query('SELECT * FROM Usuario');
+        res.json(rows);
+    } catch (error) {
+        console.error('Error en /test/usuario:', error.message);
+        res.status(500).json({ error: 'Error al obtener datos de Usuario' });
+    }
+});
+
+// Para la tabla Libro
+app.get('/test/libro', async (req, res) => {
+    try {
+        const [rows] = await pool.query('SELECT * FROM Libro');
+        res.json(rows);
+    } catch (error) {
+        console.error('Error en /test/libro:', error.message);
+        res.status(500).json({ error: 'Error al obtener datos de Libro' });
+    }
+});
+
+// Para la tabla Autores
+app.get('/test/autor', async (req, res) => {
+    try {
+        const [rows] = await pool.query('SELECT * FROM Autor');
+        res.json(rows);
+    } catch (error) {
+        console.error('Error en /test/autor:', error.message);
+        res.status(500).json({ error: 'Error al obtener datos de Autor' });
+    }
+});
+
+// Para la tabla Genero
+app.get('/test/genero', async (req, res) => {
+    try {
+        const [rows] = await pool.query('SELECT * FROM Genero');
+        res.json(rows);
+    } catch (error) {
+        console.error('Error en /test/genero:', error.message);
+        res.status(500).json({ error: 'Error al obtener datos de Genero' });
+    }
+});
+
+// Para la tabla Prestamo
+app.get('/test/prestamo', async (req, res) => {
+    try {
+        const [rows] = await pool.query('SELECT * FROM Prestamo');
+        res.json(rows);
+    } catch (error) {
+        console.error('Error en /test/prestamo:', error.message);
+        res.status(500).json({ error: 'Error al obtener datos de Prestamo' });
+    }
+});
+
+
 // Ruta para iniciar sesión
 app.post('/login', async (req, res) => {
     const { email_usuario, pass_usuario} = req.body;
