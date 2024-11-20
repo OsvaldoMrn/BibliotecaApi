@@ -3,14 +3,14 @@ use biblioteca;
 
 -- Tabla Administrador
 CREATE TABLE Administrador (
-    id_admin INT PRIMARY KEY AUTO_INCREMENT,
-    nombre_admin VARCHAR(255) NOT NULL,
-    username_admin VARCHAR(100) NOT NULL UNIQUE,
-    pass_admin VARCHAR(255) NOT NULL
+    id_administrador INT PRIMARY KEY AUTO_INCREMENT,
+    nombre_administrador VARCHAR(255) NOT NULL,
+    username_administrador VARCHAR(100) NOT NULL UNIQUE,
+    pass_administrador VARCHAR(255) NOT NULL
 );
 
 -- Insertar registros en la tabla Administrador
-INSERT INTO Administrador (nombre_admin, username_admin, pass_admin) VALUES
+INSERT INTO Administrador (nombre_administrador, username_administrador, pass_administrador) VALUES
 ('Carlos Gómez', 'CaGóm231564', 'admin1234'),
 ('María López', 'MaLóp457821', 'prueba5678'),
 ('Fernando García', 'FeGar312789', 'test4321'),
@@ -83,20 +83,20 @@ CREATE TABLE Libro (
     id_libro INT PRIMARY KEY AUTO_INCREMENT,
     titulo_libro VARCHAR(255) NOT NULL,
     fecha_publicacion_libro DATE NOT NULL,
-    disponibilidad_libro BOOLEAN NOT NULL
+    disponibilidad_libro INT NOT NULL
 );
 
 INSERT INTO Libro (titulo_libro, fecha_publicacion_libro, disponibilidad_libro) VALUES
-('Cien años de soledad', '1967-06-05', TRUE),
-('La ciudad y los perros', '1963-01-01', TRUE),
-('Ficciones', '1944-01-01', TRUE),
-('La casa de los espíritus', '1982-01-01', TRUE),
-('La muerte de Artemio Cruz', '1962-01-01', TRUE),
-('El laberinto de la soledad', '1950-01-01', TRUE),
-('Rayuela', '1963-01-01', TRUE),
-('Pedro Páramo', '1955-01-01', TRUE),
-('Veinte poemas de amor y una canción desesperada', '1924-01-01', TRUE),
-('Cuentos de la selva', '1918-01-01', TRUE);
+('Cien años de soledad', '1967-06-05', 1),
+('La ciudad y los perros', '1963-01-01', 1),
+('Ficciones', '1944-01-01', 1),
+('La casa de los espíritus', '1982-01-01', 1),
+('La muerte de Artemio Cruz', '1962-01-01', 1),
+('El laberinto de la soledad', '1950-01-01', 1),
+('Rayuela', '1963-01-01', 1),
+('Pedro Páramo', '1955-01-01', 1),
+('Veinte poemas de amor y una canción desesperada', '1924-01-01', 1),
+('Cuentos de la selva', '1918-01-01', 1);
 
 -- Tabla Autores
 CREATE TABLE Autor (
