@@ -77,6 +77,7 @@ const configureRoutes = (app, pool, __dirname) => {
         }
     });
 
+    //actualizar perfil
     app.patch('/update/:type', async (req, res) => {
         const { type } = req.params; // "usuario" o "administrador"
         const { id, ...fieldsToUpdate } = req.body; // ID del registro y campos a actualizar
@@ -117,6 +118,155 @@ const configureRoutes = (app, pool, __dirname) => {
             res.status(500).json({ error: `Error al actualizar ${type}` });
         }
     });
+
+    //GET book by name
+    app.get('/libro/:name', async (req, res) => {
+        const { name } = req.params;
+
+        try {
+            const query = 'SELECT * FROM Libro WHERE titulo_libro LIKE ?';
+            const [rows] = await pool.query(query, [`%${name}%`]);
+
+            if (rows.length === 0) {
+                return res.status(404).json({ message: 'No se encontraron libros con ese título' });
+            }
+
+            res.status(200).json(rows);
+        } catch (error) {
+            console.error('Error en /book/:name:', error.message);
+            res.status(500).json({ error: 'Error interno del servidor' });
+        }
+    });
+
+    //get all libros
+    // Ruta para obtener todos los libros con sus géneros y autores
+    app.get('/libros', async (req, res) => {
+        try {
+            // Obtener los parámetros de paginación de la consulta
+            const page = parseInt(req.query.page) || 1;  // Página actual (por defecto 1)
+            const limit = parseInt(req.query.limit) || 60;  // Número de resultados por página (por defecto 10)
+            const offset = (page - 1) * limit;  // Calculamos el offset para la consulta
+    
+            // Consulta SQL con paginación
+            const query = `
+                SELECT 
+                    L.id_libro, 
+                    L.titulo_libro, 
+                    L.fecha_publicacion_libro, 
+                    L.disponibilidad_libro,
+                    A.id_autor, 
+                    A.nombre_autor,
+                    G.id_genero, 
+                    G.nombre_genero
+                FROM Libro L
+                LEFT JOIN Autor_Libro LA ON L.id_libro = LA.id_libro
+                LEFT JOIN Autor A ON LA.id_autor = A.id_autor
+                LEFT JOIN Genero_Libro LG ON L.id_libro = LG.id_libro
+                LEFT JOIN Genero G ON LG.id_genero = G.id_genero
+                LIMIT ? OFFSET ?
+            `;
+    
+            // Ejecutar la consulta con LIMIT y OFFSET
+            const [rows] = await pool.query(query, [limit, offset]);
+    
+            if (rows.length === 0) {
+                return res.status(404).json({ error: 'No se encontraron libros en la base de datos' });
+            }
+    
+            // Agrupamos los datos por libro
+            const libros = rows.reduce((acc, row) => {
+                const libroIndex = acc.findIndex(libro => libro.id_libro === row.id_libro);
+    
+                if (libroIndex === -1) {
+                    acc.push({
+                        id_libro: row.id_libro,
+                        titulo_libro: row.titulo_libro,
+                        fecha_publicacion_libro: row.fecha_publicacion_libro,
+                        disponibilidad_libro: row.disponibilidad_libro,
+                        autores: row.id_autor ? [{ id_autor: row.id_autor, nombre_autor: row.nombre_autor }] : [],
+                        generos: row.id_genero ? [{ id_genero: row.id_genero, nombre_genero: row.nombre_genero }] : []
+                    });
+                } else {
+                    const libro = acc[libroIndex];
+    
+                    if (row.id_autor && !libro.autores.some(autor => autor.id_autor === row.id_autor)) {
+                        libro.autores.push({ id_autor: row.id_autor, nombre_autor: row.nombre_autor });
+                    }
+    
+                    if (row.id_genero && !libro.generos.some(genero => genero.id_genero === row.id_genero)) {
+                        libro.generos.push({ id_genero: row.id_genero, nombre_genero: row.nombre_genero });
+                    }
+                }
+    
+                return acc;
+            }, []);
+    
+            // Contamos el total de libros para calcular la paginación
+            const totalQuery = `
+                SELECT COUNT(*) AS total FROM Libro L
+                LEFT JOIN Autor_Libro LA ON L.id_libro = LA.id_libro
+                LEFT JOIN Autor A ON LA.id_autor = A.id_autor
+                LEFT JOIN Genero_Libro LG ON L.id_libro = LG.id_libro
+                LEFT JOIN Genero G ON LG.id_genero = G.id_genero
+            `;
+            const [[{ total }]] = await pool.query(totalQuery);
+    
+            // Enviar la respuesta con la información paginada
+            res.status(200).json({
+                total,
+                page,
+                limit,
+                total_pages: Math.ceil(total / limit),
+                books: libros
+            });
+        } catch (error) {
+            console.error('Error en /libros:', error.message);
+            res.status(500).json({ error: 'Error interno del servidor' });
+        }
+    });    
+
+    //ESTOS DOS NO FUNCIONAN <----------------------------------------------------------------------
+    //filtros
+    app.get('/libro/filtros', async (req, res) => {
+        const { genero } = req.body;
+
+        if (!genero) {
+            return res.status(400).json({ error: 'El campo "genero" es obligatorio' });
+        }
+
+        try {
+            // Obtener el ID del género desde la tabla Genero
+            const generoQuery = 'SELECT id_genero FROM Genero WHERE nombre = ?';
+            const [generoRows] = await pool.query(generoQuery, [genero]);
+
+            if (generoRows.length === 0) {
+                return res.status(404).json({ error: 'El género especificado no existe' });
+            }
+
+            const idGenero = generoRows[0].id_genero;
+
+            // Obtener los libros asociados al género desde la tabla intermedia LibroGenero
+            const librosQuery = `
+                SELECT L.id, L.titulo, L.anio_publicacion, L.disponibilidad 
+                FROM Libro L
+                INNER JOIN LibroGenero LG ON L.id = LG.id_libro
+                WHERE LG.id_genero = ?
+            `;
+            const [librosRows] = await pool.query(librosQuery, [idGenero]);
+
+            if (librosRows.length === 0) {
+                return res.status(404).json({ error: 'No se encontraron libros para el género especificado' });
+            }
+
+            res.status(200).json(librosRows);
+        } catch (error) {
+            console.error('Error en /libro/filtros:', error.message);
+            res.status(500).json({ error: 'Error interno del servidor' });
+        }
+    });
+
+
+    
     // Ruta para añadir un libro
     app.post('/add/book', async (req, res) => {
         const { titulo, anio_publicacion, disponibilidad, autores, generos } = req.body;
