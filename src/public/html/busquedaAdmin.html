@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador - Gestión de Libros</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <button id="home-button" onclick="goHome()">Home</button>
+        <h1>Gestión de Libros</h1>
+    </header>
+    <main>
+        <section class="admin-actions">
+            <h2>Acciones de Administración</h2>
+            <button onclick="addBook()">Agregar Libro</button>
+        </section>
+        <section class="search-results">
+            <h2>Lista de Libros</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>Categoría</th>
+                        <th>Disponibilidad</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTable">
+                    <!-- Aquí se agregarán los libros dinámicamente -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <script src="admin-scripts.js"></script>
+</body>
+</html>

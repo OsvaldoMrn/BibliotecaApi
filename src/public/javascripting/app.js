@@ -1,3 +1,19 @@
+// Muestra el formulario de login por defecto
+showLogin();
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Asocia los eventos a los formularios una vez que el DOM se haya cargado
+    const registerForm = document.querySelector('#registerForm form');
+    const loginForm = document.querySelector('#loginForm form');
+
+    // Añadir el evento de registro
+    registerForm.addEventListener('submit', handleRegister);
+
+    // Añadir el evento de login
+    loginForm.addEventListener('submit', handleLogin);
+});
+
+// Función para mostrar el formulario de login
 function showLogin() {
     document.getElementById('loginForm').classList.remove('hidden');
     document.getElementById('registerForm').classList.add('hidden');
@@ -5,6 +21,7 @@ function showLogin() {
     document.getElementById('registerTab').classList.remove('border-blue-500', 'text-blue-600');
 }
 
+// Función para mostrar el formulario de registro
 function showRegister() {
     document.getElementById('registerForm').classList.remove('hidden');
     document.getElementById('loginForm').classList.add('hidden');
@@ -12,19 +29,9 @@ function showRegister() {
     document.getElementById('loginTab').classList.remove('border-blue-500', 'text-blue-600');
 }
 
-showLogin();
-
-document.addEventListener('DOMContentLoaded', () => {
-    const registerForm = document.querySelector('#registerForm form');
-
-    // Añadir el evento de registro
-    registerForm.addEventListener('submit', handleRegister);
-});
-
 async function handleRegister(event) {
     event.preventDefault();
 
-    // Capturar los valores de los campos
     const nombre_usuario = document.querySelector('input[name="nombre_usuario_signin"]').value.trim();
     const email_usuario = document.querySelector('input[name="email_usuario_signin"]').value.trim();
     const pass_usuario = document.querySelector('input[name="pass_usuario_signin"]').value.trim();
@@ -47,7 +54,7 @@ async function handleRegister(event) {
 
         if (response.ok) {
             alert('Registro exitoso');
-            window.location.href = '/login.html';
+            window.location.href = 'html/index.html'; // Redirigir a otra página si es necesario
         } else {
             alert(data.error || 'Hubo un error en el registro');
         }
@@ -57,5 +64,36 @@ async function handleRegister(event) {
     }
 }
 
-// Asocia el evento al formulario de registro
-document.querySelector('#registerFormElement').addEventListener('submit', handleRegister);
+async function handleLogin(event) {
+    event.preventDefault();
+
+    const usuario_admin = document.querySelector('input[name="email_usuario"]').value.trim();
+    const pass_usuario = document.querySelector('input[name="pass_usuario"]').value.trim();
+
+    if (!usuario_admin || !pass_usuario) {
+        alert('Por favor, completa todos los campos.');
+        return;
+    }
+
+    try {
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ usuario_admin, pass_usuario }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert('Inicio de sesión exitoso');
+            window.location.href = '/homeUsuario.html'; // Redirigir a la página de inicio de sesión o dashboard
+        } else {
+            alert(data.error || 'Hubo un error en el inicio de sesión');
+        }
+    } catch (error) {
+        console.error('Error al hacer la solicitud:', error);
+        alert('Hubo un problema al intentar iniciar sesión');
+    }
+}

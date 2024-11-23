@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda de Libros</title>
+    <link rel="stylesheet" href="stylesBusqueda.css">
+</head>
+<body>
+    <header>
+        <button id="home-button" onclick="goHome()">Home</button>
+        <h1>Búsqueda de Libros</h1>
+    </header>
+    <main>
+        <section class="search-form">
+            <h2>Buscar un Libro</h2>
+            <form id="searchForm">
+                <label for="searchQuery">Buscar por título, autor o categoría:</label>
+                <input type="text" id="searchQuery" name="searchQuery" placeholder="Ej. El Quijote, Cervantes, Aventura" required>
+                <button type="submit">Buscar</button>
+            </form>
+        </section>
+        <section class="search-results">
+            <h2>Resultados</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>Categoría</th>
+                        <th>Disponibilidad</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTable">
+                    <!-- Aquí se agregarán los resultados dinámicamente -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <script src="scripts.js"></script>
+</body>
+</html>

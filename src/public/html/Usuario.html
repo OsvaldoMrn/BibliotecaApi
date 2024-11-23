@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Información del Usuario</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <button id="home-button" onclick="goHome()">Home</button>
+        <h1>Mi Biblioteca</h1>
+    </header>
+    
+    <main>
+        <section class="user-info">
+            <h2>Información del Usuario</h2>
+            <p><strong>Nombre de Usuario:</strong> <span id="username"></span></p>
+            <p><strong>Correo Electrónico:</strong> <span id="email"></span></p>
+            <button onclick="editInfo('username')">Modificar datos</button>
+        </section>
+
+        <section class="loan-status">
+            <h2>Status de Préstamos</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Título del Libro</th>
+                        <th>Fecha de Préstamo</th>
+                        <th>Fecha de Devolución</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="loan-list">
+                    <!-- Aquí se cargarán los datos con JavaScript -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- Archivo de scripts -->
+    <script>
+  async function loadUserLoans() {
+    const userId = 1; // ID de usuario manual para prueba
+
+    try {
+        const response = await fetch(`prestamos/${userId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Error al obtener los préstamos');
+        }
+
+        const data = await response.json();
+
+        if (data.loans && data.loans.length > 0) {
+            // Renderiza los préstamos si existen
+            renderLoans(data.loans);
+        } else {
+            // Muestra mensaje cuando no hay préstamos
+            document.getElementById('loan-list').innerHTML = `
+                <tr>
+                    <td colspan="4" style="text-align: center;">No tienes préstamos actualmente.</td>
+                </tr>
+            `;
+        }
+    } catch (error) {
+        console.error('Error:', error.message);
+        alert(`Error al obtener los préstamos: ${error.message}`);
+    }
+}
+
+
+function renderLoans(loans) {
+    const loanList = document.getElementById('loan-list');
+    loanList.innerHTML = ''; // Limpia el contenido previo
+
+    if (loans.length === 0) {
+        loanList.innerHTML = '<tr><td colspan="4">No se encontraron préstamos.</td></tr>';
+        return;
+    }
+
+    loans.forEach(loan => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${loan.titulo_libro}</td>
+            <td>${loan.fecha_inicio_prestamo}</td>
+            <td>${loan.fecha_fin_prestamo}</td>
+            <td>${loan.estado_prestamo}</td>
+        `;
+        loanList.appendChild(row);
+    });
+}
+
+// Llama a la función al cargar la página
+document.addEventListener('DOMContentLoaded', loadUserLoans);
+
+        // Botón de inicio
+        function goHome() {
+            window.location.href = '/';
+        }
+
+    </script>
+</body>
+</html>

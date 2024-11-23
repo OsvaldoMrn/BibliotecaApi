@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Biblioteca - Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --color-azul-oscuro: #1E3A8A;
+            --color-azul-claro: #3B82F6;
+            --color-cafe: #8B5E3C;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div id="content"></div>
+
+                <nav class="bg-blue-800 p-4 text-white flex justify-between items-center">
+                    <h1 class="text-2xl font-semibold">Panel de Administrador</h1>
+                    <div>
+                        <a href="index.html" class="text-white hover:underline">Cerrar Sesión</a>
+                    </div>
+                </nav>
+                <div class="p-8">
+                    <h2 class="text-3xl font-bold mb-6 text-gray-800">Bienvenido, Administrador</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <a href="#" class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition duration-300">
+                            <h3 class="text-xl font-semibold mb-2 text-blue-700">Gestionar Usuarios</h3>
+                            <p class="text-gray-600">Añade, edita o elimina usuarios del sistema.</p>
+                        </a>
+                        <a href="busquedaAdmin.html" class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition duration-300">
+                            <h3 class="text-xl font-semibold mb-2 text-blue-700" >Gestionar Libros</h3>
+                            <p class="text-gray-600">Administra el catálogo de libros disponibles.</p>
+                        </a>
+                        <a href="#" class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition duration-300">
+                            <h3 class="text-xl font-semibold mb-2 text-blue-700">Ver Préstamos</h3>
+                            <p class="text-gray-600">Consulta y gestiona los préstamos actuales.</p>
+                        </a>
+                    </div>
+                </div>
+           
+</body>
+</html>

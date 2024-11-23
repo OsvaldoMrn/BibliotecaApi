@@ -1,9 +1,10 @@
 import path from 'path';
 
+
 const configureRoutes = (app, pool, __dirname) => {
     // Ruta principal
     app.get('/', (req, res) => {
-        res.sendFile(path.join(__dirname, 'public', 'index.html'));
+        res.sendFile(path.join(__dirname, 'public/html', 'index.html'));
     });
 
     // Ping
@@ -42,24 +43,7 @@ const configureRoutes = (app, pool, __dirname) => {
         });
     });
 
-    // Login
-    app.post('/login', async (req, res) => {
-        const { email_usuario, pass_usuario } = req.body;
-        try {
-            const [rows] = await pool.query('SELECT * FROM Usuario WHERE email_usuario = ?', [email_usuario]);
-            if (rows.length === 0) {
-                return res.status(404).json({ error: 'Usuario no encontrado' });
-            }
-            const user = rows[0];
-            if (user.pass_usuario !== pass_usuario) {
-                return res.status(401).json({ error: 'Contraseña incorrecta' });
-            }
-            res.status(200).json({ message: 'Inicio de sesión exitoso', user });
-        } catch (error) {
-            console.error('Error en /login:', error);
-            res.status(500).json({ error: 'Error interno del servidor' });
-        }
-    });
+   
 
     // Registro
     app.post('/register', async (req, res) => {
@@ -77,6 +61,49 @@ const configureRoutes = (app, pool, __dirname) => {
         }
     });
 
+     
+     // Login pero no jala todavia
+/*app.post('/login', async (req, res) => {
+    const { email_usuario, pass_usuario } = req.body;
+
+    try {
+        // Primero, buscar el usuario en la tabla 'Usuario'
+        const [rows] = await pool.query('SELECT * FROM Usuario WHERE email_usuario = ?', [email_usuario]);
+        
+        // Si el usuario no se encuentra en la tabla 'Usuario', buscarlo en la tabla 'Administrador'
+        if (rows.length === 0) {
+            const [rows1] = await pool.query('SELECT * FROM Administrador WHERE username_administrador = ?', [email_usuario]);
+
+            // Si no se encuentra ni en 'Usuario' ni en 'Administrador', retornar error
+            if (rows1.length === 0) {
+                return res.status(404).json({ error: 'Usuario no encontrado' });
+            }
+
+            const admin = rows1[0];
+            
+            // Verificar si la contraseña del administrador es correcta
+            if (admin.pass_administrador !== pass_usuario) {
+                return res.status(401).json({ error: 'Contraseña incorrecta' });
+            }
+
+            // Si es un administrador y la contraseña es correcta
+            return res.status(200).json({ message: 'Inicio de sesión exitoso como administrador', user: admin });
+        } else {
+            // Si se encuentra en la tabla 'Usuario', verificar la contraseña
+            const user = rows[0];
+            if (user.pass_usuario !== pass_usuario) {
+                return res.status(401).json({ error: 'Contraseña incorrecta' });
+            }
+
+            // Si es un usuario normal y la contraseña es correcta
+            return res.status(200).json({ message: 'Inicio de sesión exitoso como usuario', user: user });
+        }
+    } catch (error) {
+        console.error('Error en /login:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+});
+*/
     //actualizar perfil
     app.patch('/update/:type', async (req, res) => {
         const { type } = req.params; // "usuario" o "administrador"
@@ -118,7 +145,35 @@ const configureRoutes = (app, pool, __dirname) => {
             res.status(500).json({ error: `Error al actualizar ${type}` });
         }
     });
-
+    //muestra los prestamos del usuario, se requiere jalar el id
+    app.get('/prestamos/:id_usuario', async (req, res) => {
+        const { id_usuario } = req.params;
+    
+        if (!id_usuario) {
+            return res.status(400).json({ error: 'ID de usuario no proporcionado' });
+        }
+    
+        try {
+            const [rows] = await pool.query(
+                `SELECT p.id_prestamo, l.titulo_libro, p.fecha_inicio_prestamo, p.fecha_fin_prestamo, p.estado_prestamo 
+                 FROM Prestamo p
+                 INNER JOIN Libro l ON p.id_libro = l.id_libro
+                 WHERE p.id_usuario = ?`,
+                [id_usuario]
+            );
+    
+            if (rows.length === 0) {
+                // Respuesta clara cuando no hay préstamos
+                return res.status(200).json({ message: 'No hay préstamos asociados a este usuario', loans: [] });
+            }
+    
+            res.status(200).json({ loans: rows });
+        } catch (error) {
+            console.error('Error en /prestamos:', error);
+            res.status(500).json({ error: 'Error interno del servidor' });
+        }
+    });
+    
     //GET book by name
     app.get('/libro/:name', async (req, res) => {
         const { name } = req.params;
@@ -351,3 +406,4 @@ const configureRoutes = (app, pool, __dirname) => {
 };
 
 export default configureRoutes;
+
