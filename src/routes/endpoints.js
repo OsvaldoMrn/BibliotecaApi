@@ -63,47 +63,39 @@ const configureRoutes = (app, pool, __dirname) => {
 
      
      // Login pero no jala todavia
-/*app.post('/login', async (req, res) => {
-    const { email_usuario, pass_usuario } = req.body;
-
-    try {
-        // Primero, buscar el usuario en la tabla 'Usuario'
-        const [rows] = await pool.query('SELECT * FROM Usuario WHERE email_usuario = ?', [email_usuario]);
-        
-        // Si el usuario no se encuentra en la tabla 'Usuario', buscarlo en la tabla 'Administrador'
-        if (rows.length === 0) {
-            const [rows1] = await pool.query('SELECT * FROM Administrador WHERE username_administrador = ?', [email_usuario]);
-
-            // Si no se encuentra ni en 'Usuario' ni en 'Administrador', retornar error
-            if (rows1.length === 0) {
+     app.post('/login', async (req, res) => {
+        const { email_usuario, pass_usuario } = req.body;
+    
+        if (!email_usuario || !pass_usuario) {
+            return res.status(400).json({ error: 'Correo y contraseña son obligatorios' });
+        }
+    
+        try {
+            // Buscar al usuario en la base de datos
+            const [rows] = await pool.query('SELECT * FROM Usuario WHERE email_usuario = ?', [email_usuario]);
+    
+            if (rows.length === 0) {
+                // Usuario no encontrado
                 return res.status(404).json({ error: 'Usuario no encontrado' });
             }
-
-            const admin = rows1[0];
-            
-            // Verificar si la contraseña del administrador es correcta
-            if (admin.pass_administrador !== pass_usuario) {
-                return res.status(401).json({ error: 'Contraseña incorrecta' });
-            }
-
-            // Si es un administrador y la contraseña es correcta
-            return res.status(200).json({ message: 'Inicio de sesión exitoso como administrador', user: admin });
-        } else {
-            // Si se encuentra en la tabla 'Usuario', verificar la contraseña
+    
             const user = rows[0];
+    
+            // Verificar contraseña
             if (user.pass_usuario !== pass_usuario) {
                 return res.status(401).json({ error: 'Contraseña incorrecta' });
             }
-
-            // Si es un usuario normal y la contraseña es correcta
-            return res.status(200).json({ message: 'Inicio de sesión exitoso como usuario', user: user });
+    
+            // Inicio de sesión exitoso
+            res.status(200).json({ message: 'Inicio de sesión exitoso', user });
+        } catch (error) {
+            console.error('Error en /login:', error.message);
+            res.status(500).json({ error: 'Error interno del servidor' });
         }
-    } catch (error) {
-        console.error('Error en /login:', error);
-        res.status(500).json({ error: 'Error interno del servidor' });
-    }
-});
-*/
+    });
+    
+    
+    
     //actualizar perfil
     app.patch('/update/:type', async (req, res) => {
         const { type } = req.params; // "usuario" o "administrador"

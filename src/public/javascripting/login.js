@@ -67,10 +67,11 @@ async function handleRegister(event) {
 async function handleLogin(event) {
     event.preventDefault();
 
-    const usuario_admin = document.querySelector('input[name="email_usuario"]').value.trim();
+    // Obtener los valores del formulario
+    const email_usuario = document.querySelector('input[name="email_usuario"]').value.trim();
     const pass_usuario = document.querySelector('input[name="pass_usuario"]').value.trim();
 
-    if (!usuario_admin || !pass_usuario) {
+    if (!email_usuario || !pass_usuario) {
         alert('Por favor, completa todos los campos.');
         return;
     }
@@ -81,14 +82,14 @@ async function handleLogin(event) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ usuario_admin, pass_usuario }),
+            body: JSON.stringify({ email_usuario, pass_usuario }),
         });
 
         const data = await response.json();
 
         if (response.ok) {
             alert('Inicio de sesión exitoso');
-            window.location.href = '/homeUsuario.html'; // Redirigir a la página de inicio de sesión o dashboard
+            window.location.href = '/html/homeUsuario.html'; // Redirige a la página de usuario
         } else {
             alert(data.error || 'Hubo un error en el inicio de sesión');
         }
@@ -97,3 +98,4 @@ async function handleLogin(event) {
         alert('Hubo un problema al intentar iniciar sesión');
     }
 }
+

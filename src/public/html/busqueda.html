@@ -1,42 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Búsqueda de Libros</title>
-    <link rel="stylesheet" href="stylesBusqueda.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
 </head>
-<body>
-    <header>
-        <button id="home-button" onclick="goHome()">Home</button>
-        <h1>Búsqueda de Libros</h1>
-    </header>
-    <main>
-        <section class="search-form">
-            <h2>Buscar un Libro</h2>
-            <form id="searchForm">
-                <label for="searchQuery">Buscar por título, autor o categoría:</label>
-                <input type="text" id="searchQuery" name="searchQuery" placeholder="Ej. El Quijote, Cervantes, Aventura" required>
-                <button type="submit">Buscar</button>
+<body class="bg-gray-100">
+    <nav class="bg-blue-600 p-4 text-white flex justify-between items-center">
+        <button onclick="goHome()" class="text-white hover:underline">Home</button>
+        <h1 class="text-2xl font-semibold">Búsqueda de Libros</h1>
+    </nav>
+    <main class="p-8">
+        <section class="mb-8">
+            <h2 class="text-xl font-bold mb-4 text-gray-800">Buscar un Libro</h2>
+            <form id="searchForm" class="flex flex-col md:flex-row items-center gap-4">
+                <input type="text" id="searchQuery" name="searchQuery" placeholder="Ej. El Quijote, Cervantes, Aventura"
+                    class="border p-2 rounded w-full md:w-2/3" required>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Buscar</button>
             </form>
         </section>
-        <section class="search-results">
-            <h2>Resultados</h2>
-            <table>
+        <section>
+            <h2 class="text-xl font-bold mb-4 text-gray-800">Resultados</h2>
+            <table class="min-w-full bg-white shadow-md rounded overflow-hidden">
                 <thead>
-                    <tr>
-                        <th>Título</th>
-                        <th>Autor</th>
-                        <th>Categoría</th>
-                        <th>Disponibilidad</th>
+                    <tr class="bg-blue-600 text-white">
+                        <th class="py-2 px-4">Título</th>
+                        <th class="py-2 px-4">Fecha Publicación</th>
+                        <th class="py-2 px-4">Autor(es)</th>
+                        <th class="py-2 px-4">Género(s)</th>
+                        <th class="py-2 px-4">Disponibilidad</th>
                     </tr>
                 </thead>
-                <tbody id="resultsTable">
+                <tbody id="resultsTable" class="text-gray-700">
                     <!-- Aquí se agregarán los resultados dinámicamente -->
                 </tbody>
             </table>
+            <div class="mt-4 flex justify-between">
+                <button id="prevPage" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400" disabled>Anterior</button>
+                <button id="nextPage" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400" disabled>Siguiente</button>
+            </div>
         </section>
     </main>
-    <script src="scripts.js"></script>
+    <script src="/javascripting/busqueda.js"></script>
 </body>
 </html>
