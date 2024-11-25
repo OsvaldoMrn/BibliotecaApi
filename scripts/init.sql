@@ -1,3 +1,4 @@
+ALTER DATABASE biblioteca CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 use biblioteca;
 
@@ -87,23 +88,23 @@ CREATE TABLE Libro (
 );
 
 INSERT INTO Libro (titulo_libro, fecha_publicacion_libro, disponibilidad_libro) VALUES
-('Cien años de soledad', '1967', 1),
-('La ciudad y los perros', '1963', 1),
-('Ficciones', '1944', 1),
-('La casa de los espíritus', '1982', 1),
-('La muerte de Artemio Cruz', '1962', 1),
+('Cien años de soledad', '1967', 10),
+('La ciudad y los perros', '1963', 2),
+('Ficciones', '1944', 5),
+('La casa de los espíritus', '1982', 7),
+('La muerte de Artemio Cruz', '1962', 2),
 ('El laberinto de la soledad', '1950', 1),
-('Rayuela', '1963', 1),
-('Pedro Páramo', '1955', 1),
-('Veinte poemas de amor y una canción desesperada', '1924', 1),
-('Cuentos de la selva', '1918', 1),
-('Don Quijote de la Mancha', '1605', 1),
-('El túnel', '1948', 1),
-('Crónica de una muerte anunciada', '1981', 1),
-('La Metamorfosis', '1915', 1),
-('1984', '1949', 1),
-('Rebelión en la granja', '1945', 1),
-('Farenheit 451', '1953', 1),
+('Rayuela', '1963', 9),
+('Pedro Páramo', '1955', 11),
+('Veinte poemas de amor y una canción desesperada', '1924', 7),
+('Cuentos de la selva', '1918', 2),
+('Don Quijote de la Mancha', '1605', 3),
+('El túnel', '1948', 4),
+('Crónica de una muerte anunciada', '1981', 5),
+('La Metamorfosis', '1915', 6),
+('1984', '1949', 7),
+('Rebelión en la granja', '1945', 8),
+('Farenheit 451', '1953', 9),
 ('El extranjero', '1942', 1),
 ('En busca del tiempo perdido', '1913', 1),
 ('El principito', '1943', 1),
