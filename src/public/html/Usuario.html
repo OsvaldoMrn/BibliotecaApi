@@ -1,110 +1,149 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Información del Usuario</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Mi Biblioteca - Página de Usuario</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
 </head>
-<body>
-    <header>
-        <button id="home-button" onclick="goHome()">Home</button>
-        <h1>Mi Biblioteca</h1>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center">
+    <!-- Header -->
+    <header class="w-full bg-blue-600 text-white py-4 px-6 flex justify-between items-center shadow-md">
+        <h1 class="text-xl font-semibold">Mi Biblioteca</h1>
+        <button id="logout-button" onclick="logout()" class="bg-blue-800 px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+            Cerrar sesión
+        </button>
     </header>
-    
-    <main>
-        <section class="user-info">
-            <h2>Información del Usuario</h2>
-            <p><strong>Nombre de Usuario:</strong> <span id="username"></span></p>
-            <p><strong>Correo Electrónico:</strong> <span id="email"></span></p>
-            <button onclick="editInfo('username')">Modificar datos</button>
-        </section>
 
+    <!-- Main Content -->
+    <main class="w-full max-w-4xl bg-white rounded-lg shadow-lg p-6 mt-6">
+        <!-- User Info Section -->
+        <section class="user-info mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Información del Usuario</h2>
+            <p class="text-gray-700"><strong>Nombre de Usuario:</strong> <span id="username" class="text-gray-900"></span></p>
+            <p class="text-gray-700"><strong>Correo Electrónico:</strong> <span id="email" class="text-gray-900"></span></p>
+        </section>
+        
+        <!-- Préstamos de usuario (si existe) -->
         <section class="loan-status">
-            <h2>Status de Préstamos</h2>
-            <table>
-                <thead>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Estado de Préstamos</h2>
+            <table class="table-auto w-full border-collapse border border-gray-200 rounded-lg">
+                <thead class="bg-gray-200">
                     <tr>
-                        <th>Título del Libro</th>
-                        <th>Fecha de Préstamo</th>
-                        <th>Fecha de Devolución</th>
-                        <th>Estado</th>
+                        <th class="border border-gray-300 px-4 py-2">Título del Libro</th>
+                        <th class="border border-gray-300 px-4 py-2">Fecha de Préstamo</th>
+                        <th class="border border-gray-300 px-4 py-2">Fecha de Devolución</th>
+                        <th class="border border-gray-300 px-4 py-2">Estado</th>
                     </tr>
                 </thead>
-                <tbody id="loan-list">
-                    <!-- Aquí se cargarán los datos con JavaScript -->
+                <tbody id="loan-list" class="text-center">
+                    <!-- Los datos se cargarán dinámicamente con JavaScript -->
                 </tbody>
             </table>
         </section>
     </main>
 
-    <!-- Archivo de scripts -->
+    <!-- Scripts -->
     <script>
-  async function loadUserLoans() {
-    const userId = 1; // ID de usuario manual para prueba
+       document.addEventListener('DOMContentLoaded', () => {
+        const userId = sessionStorage.getItem('userId');
 
-    try {
-        const response = await fetch(`prestamos/${userId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+    
+    console.log('User ID:', userId);  // Verifica si el userId es correcto
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Error al obtener los préstamos');
-        }
-
-        const data = await response.json();
-
-        if (data.loans && data.loans.length > 0) {
-            // Renderiza los préstamos si existen
-            renderLoans(data.loans);
-        } else {
-            // Muestra mensaje cuando no hay préstamos
-            document.getElementById('loan-list').innerHTML = `
-                <tr>
-                    <td colspan="4" style="text-align: center;">No tienes préstamos actualmente.</td>
-                </tr>
-            `;
-        }
-    } catch (error) {
-        console.error('Error:', error.message);
-        alert(`Error al obtener los préstamos: ${error.message}`);
+    if (!userId) {
+        window.location.href = '/html/index.html'; // Si no hay userId, redirige al login
+    } else {
+        loadUserInfo(userId);
+        loadUserLoans(userId);
     }
-}
+});
 
+        async function loadUserInfo(userId) {
+            console.log('Cargando información para el usuario con ID:', userId);
 
-function renderLoans(loans) {
-    const loanList = document.getElementById('loan-list');
-    loanList.innerHTML = ''; // Limpia el contenido previo
+            try {
+                const response = await fetch(`/usuario/${userId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
 
-    if (loans.length === 0) {
-        loanList.innerHTML = '<tr><td colspan="4">No se encontraron préstamos.</td></tr>';
-        return;
-    }
+                if (!response.ok) {
+                    throw new Error('Error al cargar la información del usuario');
+                }
 
-    loans.forEach(loan => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${loan.titulo_libro}</td>
-            <td>${loan.fecha_inicio_prestamo}</td>
-            <td>${loan.fecha_fin_prestamo}</td>
-            <td>${loan.estado_prestamo}</td>
-        `;
-        loanList.appendChild(row);
-    });
-}
-
-// Llama a la función al cargar la página
-document.addEventListener('DOMContentLoaded', loadUserLoans);
-
-        // Botón de inicio
-        function goHome() {
-            window.location.href = '/';
+                const data = await response.json();
+                console.log(data);
+                if (data.success) {
+                    document.getElementById('username').textContent = data.user.nombre_usuario;
+                    document.getElementById('email').textContent = data.user.email_usuario;
+                } else {
+                    alert(data.error);
+                    window.location.href = '/html/index.html';
+                }
+            } catch (error) {
+                console.error('Error:', error.message);
+                alert('Error al cargar la información del usuario');
+            }
         }
 
+        async function loadUserLoans(userId) {
+            try {
+                const response = await fetch(`/prestamos/${userId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Error al obtener los préstamos');
+                }
+
+                const data = await response.json();
+                if (data.loans && data.loans.length > 0) {
+                    renderLoans(data.loans);
+                } else {
+                    document.getElementById('loan-list').innerHTML = `
+                        <tr>
+                            <td colspan="4" class="px-4 py-2 text-gray-700">No tienes préstamos actualmente.</td>
+                        </tr>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error:', error.message);
+                alert(`Error al obtener los préstamos: ${error.message}`);
+            }
+        }
+
+        function renderLoans(loans) {
+            const loanList = document.getElementById('loan-list');
+            loanList.innerHTML = ''; 
+
+            loans.forEach(loan => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="border border-gray-300 px-4 py-2">${loan.titulo_libro}</td>
+                    <td class="border border-gray-300 px-4 py-2">${loan.fecha_inicio_prestamo}</td>
+                    <td class="border border-gray-300 px-4 py-2">${loan.fecha_fin_prestamo}</td>
+                    <td class="border border-gray-300 px-4 py-2">${loan.estado_prestamo}</td>
+                `;
+                loanList.appendChild(row);
+            });
+        }
+
+        function logout() {
+            sessionStorage.removeItem('userId');
+            window.location.href = '/html/index.html'; // Redirige al login
+        }
     </script>
 </body>
 </html>

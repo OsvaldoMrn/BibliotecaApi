@@ -1,12 +1,41 @@
 import path from 'path';
+import express from 'express';
 
 
 const configureRoutes = (app, pool, __dirname) => {
+
+    // Middleware para establecer el encabezado Content-Type en las respuestas HTML
+app.use((req, res, next) => {
+    if (req.headers.accept.includes('text/html')) {
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    }
+    next(); // Llama al siguiente middleware o ruta
+});
+
+    // Sirve archivos estáticos desde la carpeta 'html'
+    
+    app.use(express.static(path.join(__dirname, 'public/html')));
     // Ruta principal
+
     app.get('/', (req, res) => {
-        res.sendFile(path.join(__dirname, 'public/html', 'index.html'));
+        //res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        return res.sendFile(path.join(__dirname, 'public/html', 'index.html'));
     });
 
+    app.get('/Usuario.html', (req, res) => {
+        //res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        return res.sendFile(path.join(__dirname, 'public/html', 'Usuario.html'));
+    });
+
+    app.get('/homeUsuario.html', (req, res) => {
+        //res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        return res.sendFile(path.join(__dirname, 'public/html', 'homeUsuario.html'));
+    });
+
+    app.get('/busqueda.html', (req, res) => {
+        //res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        return res.sendFile(path.join(__dirname, 'public/html', 'busqueda.html'));
+    });
     // Ping
     app.get('/ping', async (req, res) => {
         try {
@@ -62,38 +91,63 @@ const configureRoutes = (app, pool, __dirname) => {
     });
 
      
-     // Login pero no jala todavia
+     // Login 
      app.post('/login', async (req, res) => {
         const { email_usuario, pass_usuario } = req.body;
     
+        // Verificar que se envíen todos los datos necesarios
         if (!email_usuario || !pass_usuario) {
-            return res.status(400).json({ error: 'Correo y contraseña son obligatorios' });
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Correo y contraseña son obligatorios' 
+            });
         }
     
         try {
-            // Buscar al usuario en la base de datos
-            const [rows] = await pool.query('SELECT * FROM Usuario WHERE email_usuario = ?', [email_usuario]);
+            // Buscar al usuario en la base de datos por email
+            const [rows] = await pool.query(
+                'SELECT id_usuario, nombre_usuario, email_usuario, pass_usuario FROM Usuario WHERE email_usuario = ?', 
+                [email_usuario]
+            );
     
             if (rows.length === 0) {
                 // Usuario no encontrado
-                return res.status(404).json({ error: 'Usuario no encontrado' });
+                return res.status(404).json({ 
+                    success: false, 
+                    error: 'Usuario no encontrado' 
+                });
             }
     
             const user = rows[0];
     
-            // Verificar contraseña
+            // Verificar la contraseña
             if (user.pass_usuario !== pass_usuario) {
-                return res.status(401).json({ error: 'Contraseña incorrecta' });
+                return res.status(401).json({ 
+                    success: false, 
+                    error: 'Contraseña incorrecta' 
+                });
             }
     
-            // Inicio de sesión exitoso
-            res.status(200).json({ message: 'Inicio de sesión exitoso', user });
+          
+    
+            // Responder con éxito y enviar información relevante del usuario
+            res.status(200).json({
+                success: true,
+                message: 'Inicio de sesión exitoso',
+                user: {
+                    id_usuario: user.id_usuario,
+                    nombre_usuario: user.nombre_usuario,
+                    email_usuario: user.email_usuario
+                }
+            });
         } catch (error) {
             console.error('Error en /login:', error.message);
-            res.status(500).json({ error: 'Error interno del servidor' });
+            res.status(500).json({ 
+                success: false, 
+                error: 'Error interno del servidor' 
+            });
         }
     });
-    
     
     
     //actualizar perfil
@@ -137,6 +191,31 @@ const configureRoutes = (app, pool, __dirname) => {
             res.status(500).json({ error: `Error al actualizar ${type}` });
         }
     });
+
+    //muestra la información para el perfil de usuario
+    app.get('/usuario/:userId', async (req, res) => {
+        const { userId } = req.params;
+    
+        try {
+            const [rows] = await pool.query(
+                'SELECT id_usuario, nombre_usuario, email_usuario FROM Usuario WHERE id_usuario = ?',
+                [userId]
+            );
+    
+            if (rows.length === 0) {
+                return res.status(404).json({ success: false, error: 'Usuario no encontrado' });
+            }
+    
+            res.status(200).json({
+                success: true,
+                user: rows[0],
+            });
+        } catch (error) {
+            console.error('Error en /usuario/:userId:', error.message);
+            res.status(500).json({ success: false, error: 'Error interno del servidor' });
+        }
+    });
+    
     //muestra los prestamos del usuario, se requiere jalar el id
     app.get('/prestamos/:id_usuario', async (req, res) => {
         const { id_usuario } = req.params;

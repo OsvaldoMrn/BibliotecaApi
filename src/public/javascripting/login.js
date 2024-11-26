@@ -87,15 +87,19 @@ async function handleLogin(event) {
 
         const data = await response.json();
 
-        if (response.ok) {
-            alert('Inicio de sesión exitoso');
-            window.location.href = '/html/homeUsuario.html'; // Redirige a la página de usuario
+        console.log('Respuesta del servidor:', data); 
+
+        if (data.success) {
+            sessionStorage.setItem('userId', data.user.id_usuario);  // Guardar el userId
+            window.location.href = 'Usuario.html';  // Redirige al usuario
         } else {
-            alert(data.error || 'Hubo un error en el inicio de sesión');
+            alert('Error de login: ' + data.error);
         }
     } catch (error) {
         console.error('Error al hacer la solicitud:', error);
-        alert('Hubo un problema al intentar iniciar sesión');
+        alert('Error al intentar iniciar sesión');
     }
+
 }
+
 

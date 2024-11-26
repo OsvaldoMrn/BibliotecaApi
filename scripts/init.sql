@@ -1,5 +1,6 @@
-ALTER DATABASE biblioteca CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+CREATE DATABASE IF NOT EXISTS biblioteca;
+ALTER DATABASE biblioteca CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 use biblioteca;
 
 -- Tabla Administrador
@@ -386,8 +387,13 @@ CREATE TABLE Prestamo (
     id_libro INT NOT NULL,
     id_usuario INT NOT NULL,
     fecha_inicio_prestamo DATE NOT NULL,
-    fecha_fin_prestamo DATE NOT NULL,
+    fecha_fin_prestamo DATE,
     estado_prestamo VARCHAR(50) NOT NULL,
     FOREIGN KEY (id_libro) REFERENCES Libro(id_libro) ON DELETE CASCADE,
     FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario) ON DELETE CASCADE
 );
+
+INSERT INTO Prestamo (id_usuario, id_libro, fecha_inicio_prestamo, fecha_fin_prestamo, estado_prestamo) VALUES
+(1, 1, '2024-11-01', NULL, 'Activo'), -- Cien años de soledad
+(1, 7, '2024-11-05', NULL, 'Activo'), -- Rayuela
+(1, 13, '2024-11-10', NULL, 'Activo'); -- Crónica de una muerte anunciada
