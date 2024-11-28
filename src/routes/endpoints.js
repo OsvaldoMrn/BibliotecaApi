@@ -36,6 +36,31 @@ app.use((req, res, next) => {
         //res.setHeader('Content-Type', 'text/html; charset=utf-8');
         return res.sendFile(path.join(__dirname, 'public/html', 'busqueda.html'));
     });
+
+    app.get('/login/:idAdministrador', async (req, res) => {
+        const idAdministrador = req.params.idAdministrador;
+    
+        try {
+            // Consulta para verificar si el ID existe
+            const [rows] = await pool.query('SELECT id_administrador FROM Administrador WHERE id_administrador = ?', [idAdministrador]);
+    
+            if (rows.length > 0) {
+                // ID válido, envía el archivo HTML
+                return res.sendFile(path.join(__dirname, 'public/html', 'loginAdministrador.html'));
+            } else {
+                // ID no encontrado, retorna error 403 (no autorizado)
+                return res.status(403).send('No autorizado');
+            }
+        } catch (error) {
+            // Manejo de errores del servidor
+            console.error('Error en la consulta:', error);
+            return res.status(500).send('Error interno del servidor');
+        }
+    });
+
+    app.get('/homeAdmin', (req, res) => {
+        return res.sendFile(path.join(__dirname, 'public/html', 'homeAdmin.html'));
+    });
     // Ping
     app.get('/ping', async (req, res) => {
         try {
@@ -92,54 +117,54 @@ app.use((req, res, next) => {
 
      
      // Login 
-     app.post('/login', async (req, res) => {
-        const { email_usuario, pass_usuario } = req.body;
-    
-        // Verificar que se envíen todos los datos necesarios
-        if (!email_usuario || !pass_usuario) {
-            return res.status(400).json({ 
+    app.post('/login', async (req, res) => {
+    const { email_usuario, pass_usuario } = req.body;
+
+    // Verificar que se envíen todos los datos necesarios
+    if (!email_usuario || !pass_usuario) {
+        return res.status(400).json({ 
+            success: false, 
+            error: 'Correo y contraseña son obligatorios' 
+        });
+    }
+
+    try {
+        // Buscar al usuario en la base de datos por email
+        const [rows] = await pool.query(
+            'SELECT id_usuario, nombre_usuario, email_usuario, pass_usuario FROM Usuario WHERE email_usuario = ?', 
+            [email_usuario]
+        );
+
+        if (rows.length === 0) {
+            // Usuario no encontrado
+            return res.status(404).json({ 
                 success: false, 
-                error: 'Correo y contraseña son obligatorios' 
+                error: 'Usuario no encontrado' 
             });
         }
-    
-        try {
-            // Buscar al usuario en la base de datos por email
-            const [rows] = await pool.query(
-                'SELECT id_usuario, nombre_usuario, email_usuario, pass_usuario FROM Usuario WHERE email_usuario = ?', 
-                [email_usuario]
-            );
-    
-            if (rows.length === 0) {
-                // Usuario no encontrado
-                return res.status(404).json({ 
-                    success: false, 
-                    error: 'Usuario no encontrado' 
-                });
-            }
-    
-            const user = rows[0];
-    
-            // Verificar la contraseña
-            if (user.pass_usuario !== pass_usuario) {
-                return res.status(401).json({ 
-                    success: false, 
-                    error: 'Contraseña incorrecta' 
-                });
-            }
-    
-          
-    
-            // Responder con éxito y enviar información relevante del usuario
-            res.status(200).json({
-                success: true,
-                message: 'Inicio de sesión exitoso',
-                user: {
-                    id_usuario: user.id_usuario,
-                    nombre_usuario: user.nombre_usuario,
-                    email_usuario: user.email_usuario
-                }
+
+        const user = rows[0];
+
+        // Verificar la contraseña
+        if (user.pass_usuario !== pass_usuario) {
+            return res.status(401).json({ 
+                success: false, 
+                error: 'Contraseña incorrecta' 
             });
+        }
+
+        
+
+        // Responder con éxito y enviar información relevante del usuario
+        res.status(200).json({
+            success: true,
+            message: 'Inicio de sesión exitoso',
+            user: {
+                id_usuario: user.id_usuario,
+                nombre_usuario: user.nombre_usuario,
+                email_usuario: user.email_usuario
+            }
+        });
         } catch (error) {
             console.error('Error en /login:', error.message);
             res.status(500).json({ 
@@ -148,6 +173,61 @@ app.use((req, res, next) => {
             });
         }
     });
+
+    app.post('/loginAdmin', async (req, res) => {
+         const { username_administrador, pass_administrador } = req.body;
+    
+         // Verificar que se envíen todos los datos necesarios
+         if (!username_administrador || !pass_administrador) {
+             return res.status(400).json({ 
+                 success: false, 
+                 error: 'Usuario y contraseña son obligatorios' 
+             });
+         }
+    
+         try {
+             // Buscar al administrador en la base de datos por username
+             const [rows] = await pool.query(
+                 'SELECT id_administrador, nombre_administrador, username_administrador, pass_administrador FROM Administrador WHERE username_administrador = ?', 
+                 [username_administrador]
+             );
+    
+             if (rows.length === 0) {
+                 // Administrador no encontrado
+                 return res.status(404).json({ 
+                     success: false, 
+                     error: 'Administrador no encontrado' 
+                 });
+             }
+    
+             const admin = rows[0];
+    
+             // Verificar la contraseña
+             if (admin.pass_administrador !== pass_administrador) {
+                 return res.status(401).json({ 
+                     success: false, 
+                     error: 'Ocurrió un error (p)' 
+                 });
+             }
+    
+             // Responder con éxito y enviar información relevante del administrador
+             res.status(200).json({
+                 success: true,
+                 message: 'Inicio de sesión exitoso',
+                 admin: {
+                     id_administrador: admin.id_administrador,
+                     nombre_administrador: admin.nombre_administrador,
+                     username_administrador: admin.username_administrador
+                 }
+             });
+         } catch (error) {
+             console.error('Error en /login/administrador:', error.message);
+             res.status(500).json({ 
+                 success: false, 
+                 error: 'Error interno del servidor' 
+             });
+         }
+    });  
     
     
     //actualizar perfil

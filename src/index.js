@@ -3,6 +3,7 @@ import path from 'path';
 import { createPool } from 'mysql2/promise';
 import { fileURLToPath } from 'url';
 import configureRoutes from './routes/endpoints.js';
+import cors from 'cors';
 
 const app = express();
 const pool = createPool({
@@ -18,6 +19,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
 

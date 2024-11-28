@@ -11,6 +11,10 @@ CREATE TABLE Administrador (
     pass_administrador VARCHAR(255) NOT NULL
 );
 
+-- Inicializar los ids en un número random
+INSERT INTO Administrador (id_administrador, nombre_administrador, username_administrador, pass_administrador) VALUES
+(285813, 'Osvaldo Moreno', 'OsMor041013', 'pass123');
+
 -- Insertar registros en la tabla Administrador
 INSERT INTO Administrador (nombre_administrador, username_administrador, pass_administrador) VALUES
 ('Carlos Gómez', 'CaGóm231564', 'admin1234'),
