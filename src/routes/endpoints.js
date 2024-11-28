@@ -206,7 +206,7 @@ app.use((req, res, next) => {
              if (admin.pass_administrador !== pass_administrador) {
                  return res.status(401).json({ 
                      success: false, 
-                     error: 'Ocurrió un error (p)' 
+                     error: 'Ocurrió un error al iniciar sesión' 
                  });
              }
     

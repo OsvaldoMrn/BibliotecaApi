@@ -1,31 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administrador - Gestión de Libros</title>
-    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --color-azul-oscuro: #1E3A8A;
+            --color-azul-claro: #3B82F6;
+            --color-cafe: #8B5E3C;
+        }
+    </style>
 </head>
-<body>
-    <header>
-        <button id="home-button" onclick="goHome()">Home</button>
-        <h1>Gestión de Libros</h1>
-    </header>
-    <main>
-        <section class="admin-actions">
-            <h2>Acciones de Administración</h2>
-            <button onclick="addBook()">Agregar Libro</button>
+<body class="bg-gray-100">
+    <nav class="bg-blue-800 p-4 text-white flex justify-between items-center">
+        <h1 class="text-2xl font-semibold">Panel de Administrador</h1>
+        <div>
+            <a href="index.html" class="text-white hover:underline">Cerrar Sesión</a>
+        </div>
+    </nav>
+
+    <div class="p-8">
+        <h2 class="text-3xl font-bold mb-6 text-gray-800">Gestión de Libros</h2>
+
+        <!-- Sección para acciones de administración -->
+        <section class="admin-actions mb-8">
+            <h3 class="text-2xl font-semibold text-gray-700 mb-4">Acciones de Administración</h3>
+            <button onclick="addBook()" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300 mb-4">
+                Agregar Libro
+            </button>
         </section>
+
+        <!-- Sección para mostrar la lista de libros -->
         <section class="search-results">
-            <h2>Lista de Libros</h2>
-            <table>
+            <h3 class="text-2xl font-semibold text-gray-700 mb-4">Lista de Libros</h3>
+            <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-lg">
                 <thead>
                     <tr>
-                        <th>Título</th>
-                        <th>Autor</th>
-                        <th>Categoría</th>
-                        <th>Disponibilidad</th>
-                        <th>Acciones</th>
+                        <th class="px-6 py-3 text-left text-gray-700">Título</th>
+                        <th class="px-6 py-3 text-left text-gray-700">Autor</th>
+                        <th class="px-6 py-3 text-left text-gray-700">Categoría</th>
+                        <th class="px-6 py-3 text-left text-gray-700">Disponibilidad</th>
+                        <th class="px-6 py-3 text-left text-gray-700">Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="resultsTable">
@@ -33,7 +55,8 @@
                 </tbody>
             </table>
         </section>
-    </main>
-    <script src="admin-scripts.js"></script>
+    </div>
+
+    <script src="javascripting/admin-scripts.js"></script>
 </body>
 </html>
