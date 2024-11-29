@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Biblioteca - Préstamos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --color-azul-oscuro: #1E3A8A;
+            --color-azul-claro: #3B82F6;
+            --color-cafe: #8B5E3C;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-blue-800 p-4 text-white flex justify-between items-center">
+        <h1 class="text-2xl font-semibold">Gestionar préstamos</h1>
+        <div>
+            <a href="homeAdmin.html" class="text-white hover:underline">Volver al Panel</a>
+        </div>
+    </nav>
+    <div class="p-8">
+        <h2 class="text-3xl font-bold mb-6 text-gray-800">Gestión de Préstamos</h2>
+    
+        <!-- Botón para abrir formulario de préstamo -->
+        <div class="mb-4">
+            <button id="addLoanBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition duration-300">
+                Abrir Préstamo
+            </button>
+        </div>
+    
+        <!-- Tabla de préstamos -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white rounded-lg shadow">
+                <thead>
+                    <tr class="bg-blue-600 text-white">
+                        <th class="px-4 py-2">ID</th>
+                        <th class="px-4 py-2">Título del Libro</th>
+                        <th class="px-4 py-2">Nombre de Usuario</th>
+                        <th class="px-4 py-2">Fecha de Inicio</th>
+                        <th class="px-4 py-2">Fecha de Fin</th>
+                        <th class="px-4 py-2">Estatus</th>
+                    </tr>
+                </thead>
+                <tbody id="loanTableBody">
+                    <!-- Préstamo 1 - Activo -->
+                    <tr class="border-b">
+                        <td class="px-4 py-2">1</td>
+                        <td class="px-4 py-2">Cien Años de Soledad</td>
+                        <td class="px-4 py-2">Juan Pérez</td>
+                        <td class="px-4 py-2">07/11/2024</td>
+                        <td class="px-4 py-2">07/12/2024</td>
+                        <td class="px-4 py-2">Activo</td>
+                    </tr>
+                    <!-- Préstamo 2 - Vencido -->
+                    <tr class="border-b">
+                        <td class="px-4 py-2">2</td>
+                        <td class="px-4 py-2">Rayuela</td>
+                        <td class="px-4 py-2">Ana Gómez</td>
+                        <td class="px-4 py-2">25/10/2024</td>
+                        <td class="px-4 py-2">25/11/2024</td>
+                        <td class="px-4 py-2">Vencido</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    
+        <!-- Formulario de nuevo préstamo -->
+        <div id="newLoanForm" class="hidden">
+            <label for="bookTitle">Título del libro</label>
+            <input type="text" id="bookTitle" name="bookTitle" list="bookList" class="border px-4 py-2 w-full mb-4">
+            
+            <label for="username">Correo de usuario</label>
+            <input type="text" id="username" name="username" list="userList" class="border px-4 py-2 w-full mb-4">
+            
+            <label for="startDate">Fecha inicio préstamo</label>
+            <input type="date" id="startDate" value="2024-11-26" class="border px-4 py-2 w-full mb-4">
+            
+            <label for="endDate">Fecha fin préstamo</label>
+            <input type="date" id="endDate" value="2024-12-26" class="border px-4 py-2 w-full mb-4">
+            
+            <button type="button" id="saveLoanBtn" class="bg-blue-500 text-white px-4 py-2">Guardar</button>
+            <button type="button" id="cancelLoanBtn" class="bg-gray-500 text-white px-4 py-2">Cancelar</button>
+        </div>
+
+        <!-- Datalist de libros y usuarios -->
+        <datalist id="bookList">
+            <option value="Cien años de soledad">
+            <option value="Don Quijote de la Mancha">
+            <option value="Matar a un ruiseñor">
+            <option value="1984">
+        </datalist>
+
+        <datalist id="userList">
+            <option value="Juan123@gmail.com">
+            <option value="Ana@gmail.com">
+            <option value="CarLopez@hotmail.com">
+            <option value="Mart@gmail.com">
+        </datalist>
+</div>
+    </div>
+    <script>
+        // Referencias a los elementos del DOM
+        const addLoanBtn = document.getElementById('addLoanBtn');
+        const newLoanForm = document.getElementById('newLoanForm');
+        const saveLoanBtn = document.getElementById('saveLoanBtn');
+        const cancelLoanBtn = document.getElementById('cancelLoanBtn');
+        const loanTableBody = document.getElementById('loanTableBody');
+    
+        // Función para abrir el formulario de nuevo préstamo
+        addLoanBtn.addEventListener('click', function() {
+            newLoanForm.classList.remove('hidden'); // Mostrar el formulario
+            addLoanBtn.classList.add('hidden'); // Ocultar el botón
+        });
+    
+        // Función para guardar un nuevo préstamo
+        saveLoanBtn.addEventListener('click', function() {
+            // Obtener los valores de los inputs
+            const bookTitle = document.getElementById('bookTitle').value;
+            const username = document.getElementById('username').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+    
+            // Crear un nuevo registro para la tabla
+            const newRow = document.createElement('tr');
+            newRow.classList.add('border-b');
+    
+            // Añadir los datos del nuevo préstamo en la nueva fila
+            newRow.innerHTML = `
+                <td class="px-4 py-2">3</td>
+                <td class="px-4 py-2">${bookTitle}</td>
+                <td class="px-4 py-2">${username}</td>
+                <td class="px-4 py-2">${startDate}</td>
+                <td class="px-4 py-2">${endDate}</td>
+                <td class="px-4 py-2">Activo</td>
+            `;
+    
+            // Agregar la nueva fila a la tabla
+            loanTableBody.appendChild(newRow);
+    
+            // Ocultar el formulario y restaurar el botón
+            newLoanForm.classList.add('hidden');
+            addLoanBtn.classList.remove('hidden');
+    
+            // Limpiar los campos del formulario
+            document.getElementById('bookTitle').value = '';
+            document.getElementById('username').value = '';
+            document.getElementById('startDate').value = '2024-11-26';
+            document.getElementById('endDate').value = '2024-12-26';
+        });
+    
+        // Función para cancelar y ocultar el formulario
+        cancelLoanBtn.addEventListener('click', function() {
+            newLoanForm.classList.add('hidden'); // Ocultar el formulario
+            addLoanBtn.classList.remove('hidden'); // Mostrar el botón
+        });
+    </script>    
+</body>
+</html>

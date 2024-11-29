@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Préstamos</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.3/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Ocultar y mostrar la paginación */
+        .pagination {
+            display: none;
+        }
+        .pagination.show {
+            display: block;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --color-azul-oscuro: #1E3A8A;
+            --color-azul-claro: #3B82F6;
+            --color-cafe: #8B5E3C;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-blue-800 p-4 text-white flex justify-between items-center">
+        <h1 class="text-2xl font-semibold">Reporte de préstamos</h1>
+        <div>
+            <a href="homeAdmin.html" class="text-white hover:underline">Volver al Panel</a>
+        </div>
+    </nav>
+    <!-- Contenedor principal -->
+    <div class="container mx-auto p-6">
+
+        <h1 class="text-3xl font-bold mb-6">Biblioteca - Préstamos</h1>
+
+        <!-- Selector de fechas -->
+        <label for="timeRange" class="block text-lg font-medium mb-4">Selecciona un rango de tiempo:</label>
+        <select id="timeRange" class="border p-2 mb-6">
+            <option value="30">Últimos 30 días</option>
+            <option value="90">Últimos 3 meses</option>
+            <option value="180">Últimos 6 meses</option>
+            <option value="all">Todos los registros</option>
+        </select>
+
+        <!-- Tabla de préstamos -->
+        <table class="table-auto w-full bg-white border border-gray-300 rounded-lg shadow-md">
+            <thead>
+                <tr class="bg-gray-200">
+                    <th class="px-4 py-2 text-left">ID</th>
+                    <th class="px-4 py-2 text-left">Título Libro</th>
+                    <th class="px-4 py-2 text-left">Nombre Usuario</th>
+                    <th class="px-4 py-2 text-left">Fecha Inicio</th>
+                    <th class="px-4 py-2 text-left">Fecha Fin</th>
+                    <th class="px-4 py-2 text-left">Estatus</th>
+                </tr>
+            </thead>
+            <tbody id="loanTable">
+                <!-- Filas generadas dinámicamente -->
+            </tbody>
+        </table>
+
+        <!-- Paginación -->
+        <div id="pagination" class="pagination flex justify-center mt-4">
+            <button class="px-4 py-2 bg-blue-500 text-white rounded-lg mx-2" id="prevPage" disabled>Anterior</button>
+            <span id="pageNumber" class="px-4 py-2">Página 1</span>
+            <button class="px-4 py-2 bg-blue-500 text-white rounded-lg mx-2" id="nextPage">Siguiente</button>
+        </div>
+    </div>
+
+    <script>
+        // Datos de préstamo estáticos para la demostración
+        const loansData = {
+            '30': [
+                { id: 1, title: 'Cien años de soledad', username: 'Juan Pérez', startDate: '2024-11-07', endDate: '2024-12-07', status: 'Activo' },
+                { id: 2, title: 'Don Quijote de la Mancha', username: 'Ana García', startDate: '2024-10-25', endDate: '2024-11-25', status: 'Vencido' }
+            ],
+            '90': [
+                { id: 3, title: '1984', username: 'Carlos López', startDate: '2024-08-01', endDate: '2024-08-15', status: 'Vencido' },
+                { id: 4, title: 'Matar a un ruiseñor', username: 'Marta Gómez', startDate: '2024-09-01', endDate: '2024-09-15', status: 'Activo' },
+                { id: 5, title: 'El Gran Gatsby', username: 'Juan Pérez', startDate: '2024-09-10', endDate: '2024-09-24', status: 'Vencido' }
+            ],
+            '180': [
+                { id: 6, title: 'La Odisea', username: 'Carlos López', startDate: '2024-06-01', endDate: '2024-06-15', status: 'Vencido' },
+                { id: 7, title: 'Ulises', username: 'Ana García', startDate: '2024-07-01', endDate: '2024-07-15', status: 'Activo' },
+                { id: 8, title: 'Cumbres Borrascosas', username: 'Marta Gómez', startDate: '2024-07-15', endDate: '2024-07-30', status: 'Activo' },
+                { id: 9, title: 'Crimen y Castigo', username: 'Carlos López', startDate: '2024-08-01', endDate: '2024-08-15', status: 'Vencido' }
+            ],
+            'all': [
+                { id: 10, title: 'Cien años de soledad', username: 'Juan Pérez', startDate: '2024-11-07', endDate: '2024-12-07', status: 'Activo' },
+                { id: 11, title: 'Don Quijote de la Mancha', username: 'Ana García', startDate: '2024-10-25', endDate: '2024-11-25', status: 'Vencido' },
+                { id: 12, title: '1984', username: 'Carlos López', startDate: '2024-08-01', endDate: '2024-08-15', status: 'Vencido' },
+                { id: 13, title: 'Matar a un ruiseñor', username: 'Marta Gómez', startDate: '2024-09-01', endDate: '2024-09-15', status: 'Activo' },
+                { id: 14, title: 'El Gran Gatsby', username: 'Juan Pérez', startDate: '2024-09-10', endDate: '2024-09-24', status: 'Vencido' },
+                { id: 15, title: 'La Odisea', username: 'Carlos López', startDate: '2024-06-01', endDate: '2024-06-15', status: 'Vencido' },
+                { id: 16, title: 'Ulises', username: 'Ana García', startDate: '2024-07-01', endDate: '2024-07-15', status: 'Activo' },
+                { id: 17, title: 'Cumbres Borrascosas', username: 'Marta Gómez', startDate: '2024-07-15', endDate: '2024-07-30', status: 'Activo' },
+                { id: 18, title: 'Crimen y Castigo', username: 'Carlos López', startDate: '2024-08-01', endDate: '2024-08-15', status: 'Vencido' },
+                { id: 19, title: 'Fahrenheit 451', username: 'Carlos López', startDate: '2024-09-01', endDate: '2024-09-14', status: 'Activo' }
+            ]
+        };
+
+        let currentPage = 1;
+        const loansPerPage = 10;
+
+        // Función para mostrar préstamos según el rango de tiempo
+        function showLoans(timeRange) {
+            const loans = loansData[timeRange];
+            let displayedLoans = loans;
+
+            if (timeRange === 'all') {
+                const startIndex = (currentPage - 1) * loansPerPage;
+                displayedLoans = loans.slice(startIndex, startIndex + loansPerPage);
+                document.getElementById('pagination').classList.add('show');
+            } else {
+                document.getElementById('pagination').classList.remove('show');
+            }
+
+            renderTable(displayedLoans);
+        }
+
+        // Función para renderizar la tabla
+        function renderTable(loans) {
+            const loanTable = document.getElementById('loanTable');
+            loanTable.innerHTML = '';
+
+            loans.forEach(loan => {
+                const status = loan.status === 'Activo' ? '<span class="text-green-500">Activo</span>' : '<span class="text-red-500">Vencido</span>';
+                loanTable.innerHTML += `
+                    <tr>
+                        <td class="px-4 py-2">${loan.id}</td>
+                        <td class="px-4 py-2">${loan.title}</td>
+                        <td class="px-4 py-2">${loan.username}</td>
+                        <td class="px-4 py-2">${loan.startDate}</td>
+                        <td class="px-4 py-2">${loan.endDate}</td>
+                        <td class="px-4 py-2">${status}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Funciones de paginación
+        document.getElementById('nextPage').addEventListener('click', () => {
+            currentPage++;
+            const timeRange = document.getElementById('timeRange').value;
+            showLoans(timeRange);
+            document.getElementById('pageNumber').textContent = `Página ${currentPage}`;
+        });
+
+        document.getElementById('prevPage').addEventListener('click', () => {
+            currentPage--;
+            const timeRange = document.getElementById('timeRange').value;
+            showLoans(timeRange);
+            document.getElementById('pageNumber').textContent = `Página ${currentPage}`;
+        });
+
+        // Cambio de rango de tiempo
+        document.getElementById('timeRange').addEventListener('change', (e) => {
+            currentPage = 1;
+            showLoans(e.target.value);
+            document.getElementById('pageNumber').textContent = 'Página 1';
+        });
+
+        // Cargar préstamos iniciales (últimos 30 días por defecto)
+        showLoans('30');
+    </script>
+</body>
+</html>

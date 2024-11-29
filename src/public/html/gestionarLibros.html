@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Biblioteca - Gestionar Libros</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --color-azul-oscuro: #1E3A8A;
+            --color-azul-claro: #3B82F6;
+            --color-cafe: #8B5E3C;
+        }
+
+        .autocomplete-list {
+            background: #fff;
+            border: 1px solid #ddd;
+            max-height: 150px;
+            overflow-y: auto;
+            position: absolute;
+            z-index: 1000;
+            width: 100%;
+        }
+
+        .autocomplete-item {
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .autocomplete-item:hover {
+            background: #f0f0f0;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-blue-800 p-4 text-white flex justify-between items-center">
+        <h1 class="text-2xl font-semibold">Gestionar Libros</h1>
+        <div>
+            <a href="homeAdmin.html" class="text-white hover:underline">Volver al Panel</a>
+        </div>
+    </nav>
+    <div class="p-8">
+        <h2 class="text-3xl font-bold mb-6 text-gray-800">Gestión de Libros</h2>
+
+        <!-- Botón para agregar nuevo libro -->
+        <div class="mb-4">
+            <button id="addBookBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition duration-300">
+                Agregar Libro
+            </button>
+        </div>
+
+        <!-- Tabla de libros -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white rounded-lg shadow">
+                <thead>
+                    <tr class="bg-blue-600 text-white">
+                        <th class="px-4 py-2">ID</th>
+                        <th class="px-4 py-2">Título</th>
+                        <th class="px-4 py-2">Autor</th>
+                        <th class="px-4 py-2">Géneros</th>
+                        <th class="px-4 py-2">Año de Publicación</th>
+                        <th class="px-4 py-2">Disponibilidad</th>
+                        <th class="px-4 py-2">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="bookTableBody">
+                    <!-- Libros iniciales -->
+                    <tr class="border-b">
+                        <td class="px-4 py-2">1</td>
+                        <td class="px-4 py-2">Cien Años de Soledad</td>
+                        <td class="px-4 py-2">Gabriel García Márquez</td>
+                        <td class="px-4 py-2">Realismo Mágico, Novela</td>
+                        <td class="px-4 py-2">1967</td>
+                        <td class="px-4 py-2">8</td>
+                        <td class="px-4 py-2 flex space-x-2">
+                            <button class="edit-btn bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700">Editar</button>
+                            <button class="delete-btn bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700">Eliminar</button>
+                        </td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="px-4 py-2">2</td>
+                        <td class="px-4 py-2">Rayuela</td>
+                        <td class="px-4 py-2">Julio Cortázar</td>
+                        <td class="px-4 py-2">Novela, Ficción, Experimental</td>
+                        <td class="px-4 py-2">1963</td>
+                        <td class="px-4 py-2">5</td>
+                        <td class="px-4 py-2 flex space-x-2">
+                            <button class="edit-btn bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700">Editar</button>
+                            <button class="delete-btn bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700">Eliminar</button>
+                        </td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="px-4 py-2">3</td>
+                        <td class="px-4 py-2">El Túnel</td>
+                        <td class="px-4 py-2">Ernesto Sábato</td>
+                        <td class="px-4 py-2">Novela, Psicológica</td>
+                        <td class="px-4 py-2">1948</td>
+                        <td class="px-4 py-2">3</td>
+                        <td class="px-4 py-2 flex space-x-2">
+                            <button class="edit-btn bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700">Editar</button>
+                            <button class="delete-btn bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700">Eliminar</button>
+                        </td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="px-4 py-2">4</td>
+                        <td class="px-4 py-2">Pedro Páramo</td>
+                        <td class="px-4 py-2">Juan Rulfo</td>
+                        <td class="px-4 py-2">Novela, Realismo Mágico</td>
+                        <td class="px-4 py-2">1955</td>
+                        <td class="px-4 py-2">7</td>
+                        <td class="px-4 py-2 flex space-x-2">
+                            <button class="edit-btn bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700">Editar</button>
+                            <button class="delete-btn bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700">Eliminar</button>
+                        </td>
+                    </tr>
+                    <tr class="border-b">
+                        <td class="px-4 py-2">5</td>
+                        <td class="px-4 py-2">La Metamorfosis</td>
+                        <td class="px-4 py-2">Franz Kafka</td>
+                        <td class="px-4 py-2">Novela, Filosófica, Alegórica</td>
+                        <td class="px-4 py-2">1915</td>
+                        <td class="px-4 py-2">2</td>
+                        <td class="px-4 py-2 flex space-x-2">
+                            <button class="edit-btn bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700">Editar</button>
+                            <button class="delete-btn bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700">Eliminar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Formulario para agregar un nuevo libro (invisible hasta que se haga clic en "Agregar Libro") -->
+        <div id="newBookForm" class="hidden mt-6">
+            <div>
+                <label for="title" class="block mb-2 text-lg font-semibold">Título:</label>
+                <input type="text" id="title" class="w-full px-4 py-2 border rounded-lg" placeholder="Título del libro">
+            </div>
+
+            <div class="mt-4">
+                <label for="author" class="block mb-2 text-lg font-semibold">Autor:</label>
+                <input type="text" id="author" class="w-full px-4 py-2 border rounded-lg" placeholder="Escribe un autor...">
+                <div id="author-autocomplete" class="autocomplete-list hidden"></div>
+            </div>
+
+            <div class="mt-4">
+                <label for="genre" class="block mb-2 text-lg font-semibold">Géneros:</label>
+                <input type="text" id="genre" class="w-full px-4 py-2 border rounded-lg" placeholder="Escribe un género...">
+                <div id="genre-autocomplete" class="autocomplete-list hidden"></div>
+            </div>
+
+            <div class="mt-4">
+                <label for="year" class="block mb-2 text-lg font-semibold">Año de Publicación:</label>
+                <input type="text" id="year" class="w-full px-4 py-2 border rounded-lg" placeholder="Año de publicación">
+            </div>
+
+            <div class="mt-4">
+                <label for="availability" class="block mb-2 text-lg font-semibold">Disponibilidad:</label>
+                <input type="text" id="availability" class="w-full px-4 py-2 border rounded-lg" placeholder="Disponibilidad">
+            </div>
+
+            <div class="mt-6 flex space-x-4">
+                <button id="saveBookBtn" class="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-green-700 transition duration-300">Guardar</button>
+                <button id="cancelBtn" class="bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-700 transition duration-300">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const bookTableBody = document.getElementById('bookTableBody');
+            const addBookBtn = document.getElementById('addBookBtn');
+            const newBookForm = document.getElementById('newBookForm');
+            const saveBookBtn = document.getElementById('saveBookBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+
+            // Editar y guardar
+            bookTableBody.addEventListener('click', (event) => {
+                if (event.target.classList.contains('edit-btn')) {
+                    const row = event.target.closest('tr');
+                    const cells = row.querySelectorAll('td');
+
+                    for (let i = 1; i <= 5; i++) {
+                        cells[i].innerHTML = `<input type="text" value="${cells[i].innerText}" class="w-full px-2 py-1 border rounded">`;
+                    }
+
+                    event.target.textContent = 'Guardar';
+                    event.target.classList.replace('bg-green-600', 'bg-blue-600');
+                    event.target.classList.replace('edit-btn', 'save-btn');
+                } else if (event.target.classList.contains('save-btn')) {
+                    const row = event.target.closest('tr');
+                    const inputs = row.querySelectorAll('input');
+
+                    inputs.forEach((input, index) => {
+                        row.cells[index + 1].textContent = input.value;
+                    });
+
+                    event.target.textContent = 'Editar';
+                    event.target.classList.replace('bg-blue-600', 'bg-green-600');
+                    event.target.classList.replace('save-btn', 'edit-btn');
+                }
+            });
+
+            // Eliminar
+            bookTableBody.addEventListener('click', (event) => {
+                if (event.target.classList.contains('delete-btn')) {
+                    const row = event.target.closest('tr');
+                    const confirmDelete = confirm('¿Estás seguro de que deseas eliminar este libro?');
+                    if (confirmDelete) {
+                        row.remove();
+                    }
+                }
+            });
+
+            // Agregar libro
+            addBookBtn.addEventListener('click', () => {
+                newBookForm.classList.remove('hidden');
+                addBookBtn.classList.add('hidden');
+            });
+
+            // Cancelar formulario
+            cancelBtn.addEventListener('click', () => {
+                newBookForm.classList.add('hidden');
+                addBookBtn.classList.remove('hidden');
+            });
+
+            // Guardar libro
+            saveBookBtn.addEventListener('click', () => {
+                const title = document.getElementById('title').value;
+                const author = document.getElementById('author').value;
+                const genre = document.getElementById('genre').value;
+                const year = document.getElementById('year').value;
+                const availability = document.getElementById('availability').value;
+
+                const newRow = document.createElement('tr');
+                newRow.classList.add('border-b');
+                newRow.innerHTML = `
+                    <td class="px-4 py-2">${bookTableBody.children.length + 1}</td>
+                    <td class="px-4 py-2">${title}</td>
+                    <td class="px-4 py-2">${author}</td>
+                    <td class="px-4 py-2">${genre}</td>
+                    <td class="px-4 py-2">${year}</td>
+                    <td class="px-4 py-2">${availability}</td>
+                    <td class="px-4 py-2 flex space-x-2">
+                        <button class="edit-btn bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700">Editar</button>
+                        <button class="delete-btn bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700">Eliminar</button>
+                    </td>
+                `;
+                bookTableBody.appendChild(newRow);
+                newBookForm.classList.add('hidden');
+                addBookBtn.classList.remove('hidden');
+            });
+
+            // Listas de datos simulados
+            const authors = ["Gabriel García Márquez", "Julio Cortázar", "Mario Vargas Llosa"];
+            const genres = ["Realismo Mágico", "Novela", "Fantasía"];
+
+            // Función de autocompletado
+            // Función de autocompletado
+            function autocomplete(input, list, listId) {
+                const filteredList = list.filter(item => item.toLowerCase().includes(input.value.toLowerCase()));
+                const autocompleteList = document.getElementById(listId);
+                autocompleteList.innerHTML = ''; // Limpiar la lista antes de llenarla
+                filteredList.forEach(item => {
+                    const div = document.createElement('div');
+                    div.classList.add('autocomplete-item', 'p-2', 'cursor-pointer', 'hover:bg-gray-200');
+                    div.textContent = item;
+                    div.addEventListener('click', () => {
+                        input.value = item;
+                        autocompleteList.innerHTML = ''; // Limpiar la lista después de seleccionar
+                    });
+                    autocompleteList.appendChild(div);
+                });
+
+                // Mostrar la lista de autocompletado solo si hay elementos coincidentes
+                if (filteredList.length > 0) {
+                    autocompleteList.classList.remove('hidden');
+                } else {
+                    autocompleteList.classList.add('hidden');
+                }
+            }
+
+
+            // Autocompletado autor
+            document.getElementById('author').addEventListener('input', function () {
+                autocomplete(this, authors, 'author-autocomplete');
+            });
+
+            // Autocompletado género
+            document.getElementById('genre').addEventListener('input', function () {
+                autocomplete(this, genres, 'genre-autocomplete');
+            });
+        });
+    </script>
+</body>
+
+</html>
