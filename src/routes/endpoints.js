@@ -33,7 +33,7 @@ app.use((req, res, next) => {
     });
 
     app.get('/busqueda.html', (req, res) => {
-        //res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
         return res.sendFile(path.join(__dirname, 'public/html', 'busqueda.html'));
     });
 

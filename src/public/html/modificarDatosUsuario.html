@@ -29,12 +29,30 @@
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Información del Administrador</h2>
             <p class="text-gray-700"><strong>Nombre de Administrador:</strong> <span id="username" class="text-gray-900"></span></p>
             <p class="text-gray-700"><strong>Correo Electrónico:</strong> <span id="email" class="text-gray-900"></span></p>
-            <button onclick="editInfo('username')" class="mt-4 bg-green-600 px-4 py-2 rounded-lg text-white hover:bg-green-500 transition">
+            <button onclick="editInfo('username')" class="mt-4 bg-yellow-500 px-4 py-2 rounded-lg text-white hover:bg-yellow-400 transition">
                 Modificar datos
             </button>
         </section>
-        
     </main>
-    <script src="scripts.js"></script>
+
+    <!-- Scripts 
+    <script>
+        // Función para simular la acción de modificar los datos
+        function editInfo(field) {
+            alert(`Función de edición no implementada para: ${field}`);
+        }
+
+        // Función para redirigir al Home
+        function goHome() {
+            window.location.href = '/html/index.html';  // Redirige al home (ajusta la URL si es necesario)
+        }
+
+        // Simulación de carga de datos (podrías reemplazarlo con una petición a tu API)
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('username').textContent = 'Administrador Ejemplo';
+            document.getElementById('email').textContent = 'admin@biblioteca.com';
+        });
+    </script>-->
+
 </body>
 </html>

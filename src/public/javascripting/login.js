@@ -91,7 +91,7 @@ async function handleLogin(event) {
 
         if (data.success) {
             sessionStorage.setItem('userId', data.user.id_usuario);  // Guardar el userId
-            window.location.href = 'Usuario.html';  // Redirige al usuario
+            window.location.href = 'homeUsuario.html';  // Redirige al usuario
         } else {
             alert('Error de login: ' + data.error);
         }
